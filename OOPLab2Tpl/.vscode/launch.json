@@ -1,7 +1,103 @@
-{
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": []
-}
+#include <iostream> 
+#include <vector> 
+#include <bitset> 
+#include <string> 
+
+  
+using namespace std; 
+
+  
+
+bool calculateParity(int asciiCode) { 
+
+    int ones = 0; 
+
+    while (asciiCode > 0) { 
+
+        ones += asciiCode & 1; 
+
+        asciiCode >>= 1; 
+
+    } 
+
+    return ones % 2 == 1;  } 
+
+  
+
+int main() { 
+
+    string lines[4]; 
+
+    cout << "Введіть 4 рядки тексту (не більше 32 символів кожен):" << endl; 
+
+     
+
+    for (int i = 0; i < 4; i++) { 
+
+        getline(cin, lines[i]); 
+
+             if (lines[i].length() < 32) { 
+
+            lines[i].append(32 - lines[i].length(), ' '); 
+
+        } 
+
+    } 
+
+  
+
+      vector<uint16_t> encryptedData; 
+
+  
+
+       for (int i = 0; i < 4; i++) { 
+
+        for (int j = 0; j < 32; j++) { 
+
+            char c = lines[i][j]; 
+
+            int asciiCode = static_cast<int>(c); 
+
+            bool parityBit = calculateParity(asciiCode); 
+
+  
+
+                       uint16_t encodedByte = 0; 
+
+  
+
+                    encodedByte |= (i & 0x3) << 14;  
+
+  
+
+                     encodedByte |= (j & 0x1F) << 9;    
+
+                      encodedByte |= (asciiCode & 0xFF) << 1;    
+
+            
+
+            encodedByte |= (parityBit ? 1 : 0); 
+
+  
+
+                        encryptedData.push_back(encodedByte); 
+
+        } 
+
+    } 
+
+  
+
+     cout << "Зашифровані дані (у вигляді двійкових чисел):" << endl; 
+
+    for (size_t i = 0; i < encryptedData.size(); i++) { 
+
+        cout << bitset<16>(encryptedData[i]) << endl; 
+
+    } 
+
+  
+
+    return 0; 
+
+} 
